@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { generateMockPDF } from './services/pdf/mockPdf.js';
 
 function App() {
+  const [pdfUrl, setPdfUrl] = useState(null);
+
+  useEffect(() => {
+    // Generate the PDF URL and set it to state
+    const url = generateMockPDF();
+    setPdfUrl(url);
+
+    // Clean up the Blob URL when the component unmounts
+    return () => URL.revokeObjectURL(url);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>PDF Viewer</h1>
+      {pdfUrl ? (
+        <iframe
+          src={pdfUrl}
+          width="100%"
+          height="600px"
+          style={{ border: 'none' }}
+          title="PDF Viewer"
+        ></iframe>
+      ) : (
+        <p>Loading PDF...</p>
+      )}
     </div>
   );
 }
